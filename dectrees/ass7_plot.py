@@ -7,9 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import dtree
 import drawtree_qt5
-import random
+import pandas
 
-ass7data = np.load("ass7_data.npy")
+ass7data = np.load("ass7_data_old.npy")
 fractions = ass7data[0]
 perf_data = ass7data[1]
 
@@ -21,8 +21,18 @@ for data_ind in [0, 2]:
             yerr=stds[data_ind, :],
             label="Monk{} pruned".format(data_ind+1),
             marker=".")
+    print(repr("Monk{}".format(data_ind+1)).rjust(1))
+    # print(repr("Means").rjust(1), repr("Vars").rjust(2))
+    # for i in range(means.shape[1]):
+    #     print(repr(means[data_ind, i]).rjust(1), repr(stds[data_ind,i]).rjust(2))
+    table_data = np.zeros((2, means.shape[1]))
+    table_data[0, :] = means[data_ind, :]
+    table_data[1, :] = stds[data_ind, :]
+    print(pandas.DataFrame(table_data, ["Means", "Vars"], fractions))
+
+
 
 plt.legend()
 plt.xlabel("Validation set fraction")
-plt.ylabel("Classification error")
+plt.ylabel("Classification error (with variance)")
 plt.show()
