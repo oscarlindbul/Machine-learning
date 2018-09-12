@@ -30,7 +30,14 @@ for data_ind in [0, 2]:
     table_data[1, :] = stds[data_ind, :]
     print(pandas.DataFrame(table_data, ["Means", "Vars"], fractions))
 
-
+exp_data = np.zeros((len(fractions), 5))
+exp_data[:,0] = fractions
+exp_data[:,1] = 1-means[0, :]
+exp_data[:,2] = stds[0, :]
+exp_data[:,3] = 1-means[2, :]
+exp_data[:,4] = stds[2, :]
+header = ["frac", "Monk1Mean", "Monk1STD", "Monk3Mean", "Monk3STD"]
+np.savetxt("exp_data.csv", exp_data, delimiter=' ', header=" ".join(header))
 
 plt.legend()
 plt.xlabel("Validation set fraction")

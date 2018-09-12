@@ -2,30 +2,30 @@ addpath '../prtools3.1.6';
 addpath '../ID3';
 
 %Assignment 1
-pos=[];
-neg=[];
-gbound(1,:)=[0 0 9 9];
-lbound=[];
-plot_clearn(pos,neg,gbound,lbound);
-pause
-oracle(3,3);
-pos(1,:)=[3 3];
-lbound(1,:)=[3 3 3 3];
-plot_clearn(pos,neg,gbound,lbound);
-pause
-oracle(5,5)
-pos(2,:)=[5 5];
-lbound(1,:)=[3 3 5 5];
-plot_clearn(pos,neg,gbound,lbound);
-pause
-oracle(1,2)
-neg(1,:)=[1 2];
-gbound(1,:)=[3 3 5 5];
-plot_clearn(pos,neg,gbound,lbound);
-pause
+% pos=[];
+% neg=[];
+% gbound(1,:)=[0 0 9 9];
+% lbound=[];
+% plot_clearn(pos,neg,gbound,lbound);
+% pause
+% oracle(3,3);
+% pos(1,:)=[3 3];
+% lbound(1,:)=[3 3 3 3];
+% plot_clearn(pos,neg,gbound,lbound);
+% pause
+% oracle(5,5)
+% pos(2,:)=[5 5];
+% lbound(1,:)=[3 3 5 5];
+% plot_clearn(pos,neg,gbound,lbound);
+% pause
+% oracle(1,2)
+% neg(1,:)=[1 2];
+% gbound(1,:)=[3 3 5 5];
+% plot_clearn(pos,neg,gbound,lbound);
+% pause
 
 
-return
+% return
 	 
 %Assignment 2
 
