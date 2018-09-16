@@ -35,7 +35,7 @@ training_data = np.array([data.monk1, data.monk2, data.monk3])
 test_data = np.array([data.monk1test, data.monk2test, data.monk3test])
 
 iters = 10000
-fractions = np.arange(0.3, 0.9, 0.1)
+fractions = np.arange(0.3, 0.9, 0.05)
 N = len(fractions)
 # (number of data sets, number of fractions, number of versions (validation/test), number of iterations)
 perf_data = np.zeros((len(training_data), N, iters))
@@ -48,19 +48,8 @@ for data_ind in [0, 1, 2]:
             tree = dtree.buildTree(train_set, data.attributes)
             pruned_tree = complete_prune(tree, val_set)
             perf_data[data_ind, i, iter] = dtree.check(pruned_tree, test_data[data_ind])
-            # perf_data[data_ind, i, 1, iter] = dtree.check(tree, test_data[data_ind])
+
         if iter % 10 == 0:
-            # print(np.sqrt(np.var(perf_data[data_ind, :, :iter], axis=1)))
             print("Monk{}, {:.0f}%".format(data_ind+1, iter/float(iters)*100))
 
-    # means = np.mean(perf_data, axis=3)
-    # stds = np.sqrt(np.var(perf_data, axis=3))
-    # plt.errorbar(fractions, 1-means[data_ind, :], yerr=stds[data_ind, :, 0], label="Monk{} pruned".format(data_ind+1))
-    # plt.errorbar(fractions, means[data_ind, :, 1], yerr=stds[data_ind, :, 1], label="Monk{} normal".format(data_ind+1), )
-
 np.save("ass7_data", (fractions, perf_data))
-
-# plt.legend()
-# plt.xlabel("Validation set fraction")
-# plt.ylabel("Classification error")
-# plt.show()

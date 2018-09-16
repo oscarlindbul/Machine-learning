@@ -350,8 +350,8 @@ Do remember to print axes labels, legends and data points as you will not pass w
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-		xlabel=Validation set fraction,
-		ylabel=Classification error (with std),
+		xlabel=Training set fraction,
+		ylabel=Classification error ($\pm$ std),
 		error bars/y dir=both,
 		error bars/y explicit,
 		grid=both,
@@ -365,7 +365,7 @@ Do remember to print axes labels, legends and data points as you will not pass w
 
 \end{axis}
 \end{tikzpicture}
-\caption{Classification error after pruning of tree, averaged over several iterations, with standard deviation}
+\caption{Classification error after pruning of tree, averaged over 9000 iterations, with standard deviation}
 \end{figure}
 
 
