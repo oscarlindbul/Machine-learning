@@ -6,30 +6,15 @@ import sys
 from SupportVectorOptimization import *
 # from printer import plotAll
 
-# def print_help():
-#     print("solve.py [data file] ([option] [args] ...)")
-#     print()
-#     print("Options:")
-#     print("Use kernel type: -t [kernel type (default 'linear')] [param]")
-#     print("Set slack: -s [C (default inf)]")
-#     print("set output file: -o [file name]")
-#     print("Supported Kernels:\n", "'linear'\n", "'poly'\n", "'rbf'")
-#
-# def check_input():
-#     dataname = sys.argv[1]
-#
-#     i = 2
-#     while i < len(sys.argv):
-#         if sys.argv[0]
-#         i += 1
+threshold = 1e-9
 
 def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.pdf", plot=True):
 
     data = np.load(datafile)
     inputs = data['inputs']
     targets = data['targets']
-    print("input shape", inputs.shape)
-    print("target shape", targets.shape)
+    print("inputs", inputs)
+    print("targets", targets)
 
     # precalculate matrix
 
@@ -61,11 +46,12 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.
     # solve
     solution = minimize(objective, start, bounds=bounds, constraints=constraint)
     alpha = solution['x']
-    print(solution["success"], solution["message"])
+    print(alpha, solution["success"], solution["message"])
+    print("Nonzero", alpha > threshold)
     print("zero func", zero_func(alpha))
 
-    support_vecs = inputs[:, alpha > 0]
-    support_targets = targets[alpha > 0]
+    support_vecs = inputs[:, alpha > threshold]
+    support_targets = targets[alpha > threshold]
     print(support_vecs.shape)
     # calculate b = sum_i alpha_i * t_i * K(s, x_i) - t_s for SV s
     # print(alpha, objective(alpha))
@@ -73,7 +59,7 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.
     for i in range(len(b)):
         # print("kern", alpha*kernel(support_vecs[:, i], inputs))
         b[i] = np.sum(alpha*targets*kernel(support_vecs[:, i], inputs)) - support_targets[i]
-        print(b[i])
+        print("b val " + str(i), b[i])
     b = np.mean(b)
 
     alpha_t = alpha*targets

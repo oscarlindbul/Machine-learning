@@ -9,8 +9,8 @@ PMatrix = 0
 #global globalAlpha = objective(ALPHA_HERE)
 
 def objective(alpha):
-    p_term = 0.5*numpy.dot(numpy.transpose(alpha), numpy.matmul(PMatrix, alpha))
-    print(p_term - numpy.sum(alpha))
+    p_term = 0.5*numpy.dot(alpha, numpy.matmul(PMatrix, alpha))
+    print("objective", p_term - numpy.sum(alpha))
     return p_term - numpy.sum(alpha)
 
 def lin_kernel(x, y):
@@ -28,8 +28,11 @@ def calculatePMatrix(x, t, kernel):
 
     # print("T shape", t.shape)
     tTerm = numpy.outer(t, t)
+    print("T mat", tTerm)
+    print("kern mat", kernel(x,x))
     global PMatrix
     PMatrix = tTerm * kernel(x, x)
+    print("P mat", PMatrix)
     # print("Pmat", PMatrix.shape)
     # print("X", kernel(x,x))
     # print("T", tTerm)
