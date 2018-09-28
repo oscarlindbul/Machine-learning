@@ -4,12 +4,14 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 import sys
 from SupportVectorOptimization import *
-# from printer import plotAll
+from printer import plotAll
+
 
 threshold = 1e-9
 
 def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.jpg", plot=True):
 
+    print("REEEEE")
     data = np.load(datafile)
     inputs = data['inputs']
     targets = data['targets']
@@ -66,4 +68,4 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.
     for i in range(len(targets)):
         print("test " + str(i), indicator(inputs[:, i]), np.sign(indicator(inputs[:, i])) == targets[i])
 
-    # plotAll(inputs, targets, indicator)
+    plotAll(inputs, targets, indicator)
