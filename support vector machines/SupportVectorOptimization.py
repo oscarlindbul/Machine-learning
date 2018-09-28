@@ -60,22 +60,18 @@ def calculatePMatrix(x, t, kernel):
 def zerofun(alpha, t):
     return numpy.dot(alpha, t)
 
-def binSolve(points, func):
-    print(points)
-    if len(points) <= 2:
-        return numpy.mean(points, axis=0)
-    left = numpy.sign(func(points[0]))
-    right = numpy.sign(func(points[-1]))
-    if left == right:
-        return -1
-    mid = int(len(points) / 2)
-    val = numpy.sign(func(points[mid]))
-    if val == right:
-        return binSolve(points[:(mid+1)], func)
-    elif val == left:
-        return binSolve(points[mid:], func)
-    else:
-        return -1
+# def binSolve(func, guess, threshold=1e-5):
+#     print(points)
+#     if func(guess) <= threshold:
+#         return numpy.mean(points, axis=0)
+#     mid = int(len(points) / 2)
+#     val = numpy.sign(func(points[mid]))
+#     if val == right:
+#         return binSolve(points[:(mid+1)], func)
+#     elif val == left:
+#         return binSolve(points[mid:], func)
+#     else:
+#         return -1
 
 # PMatrix = calculatePMatrix("linear")
 
