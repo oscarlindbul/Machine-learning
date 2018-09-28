@@ -8,13 +8,13 @@ from SupportVectorOptimization import *
 
 threshold = 1e-9
 
-def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.pdf", plot=True):
+def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.jpg", plot=True):
 
     data = np.load(datafile)
     inputs = data['inputs']
     targets = data['targets']
-    print("inputs", inputs)
-    print("targets", targets)
+    # print("inputs", inputs)
+    # print("targets", targets)
 
     # precalculate matrix
 
@@ -26,8 +26,7 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.
     elif kern_type == "poly":
         kernel = lambda x, y: poly_kernel(x, y, kern_param)
     elif kern_type == "rbf":
-        # TODO
-        print("TODO")
+        kernel = lambda x, y: rbf_kernel(x, y, kern_param)
     else:
         print("Error! Unsupported kernel type")
         return
