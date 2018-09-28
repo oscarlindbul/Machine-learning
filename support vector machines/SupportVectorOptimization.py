@@ -24,6 +24,9 @@ def lin_kernel(x, y):
 def poly_kernel(x, y, param):
     return (lin_kernel(x, y) + 1)**p
 
+def rbf_kernel(x, y, param):
+    return numpy.exp(-lin_kernel(x-y, x-y) / (2*param**2))
+
 def calculatePMatrix(x, t, kernel):
 
     # print("T shape", t.shape)
@@ -57,4 +60,29 @@ def calculatePMatrix(x, t, kernel):
 def zerofun(alpha, t):
     return numpy.dot(alpha, t)
 
+def binSolve(points, func):
+    print(points)
+    if len(points) <= 2:
+        return numpy.mean(points, axis=0)
+    left = numpy.sign(func(points[0]))
+    right = numpy.sign(func(points[-1]))
+    if left == right:
+        return -1
+    mid = int(len(points) / 2)
+    val = numpy.sign(func(points[mid]))
+    if val == right:
+        return binSolve(points[:(mid+1)], func)
+    elif val == left:
+        return binSolve(points[mid:], func)
+    else:
+        return -1
+
 # PMatrix = calculatePMatrix("linear")
+
+# func = lambda x : -1 if x[0] < 0 else 1
+# N = 10001
+# points = numpy.zeros((N, 2))
+# points[:, 0] = numpy.linspace(-5, 10, N)
+# points[:, 1] = numpy.ones(N)
+# # print(points[1])
+# print(binSolve(points, func))
