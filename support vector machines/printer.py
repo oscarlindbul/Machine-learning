@@ -7,7 +7,6 @@ def plotAll(X, t, indicator):
     plotPoints(X, t)
     plotContour(indicator)
     plt.axis('equal')
-    plt.show()
 
 
 def plotPoints(X, t):

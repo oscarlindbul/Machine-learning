@@ -9,14 +9,11 @@ from printer import plotAll
 
 threshold = 1e-9
 
-def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.jpg", plot=True):
+def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="", plot=True):
 
-    print("REEEEE")
     data = np.load(datafile)
     inputs = data['inputs']
     targets = data['targets']
-    # print("inputs", inputs)
-    # print("targets", targets)
 
     # precalculate matrix
 
@@ -47,25 +44,28 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="fig.
     # solve
     solution = minimize(objective, start, bounds=bounds, constraints=constraint)
     alpha = solution['x']
-    print(alpha, solution["success"], solution["message"])
-    print("Nonzero", alpha > threshold)
-    print("zero func", zero_func(alpha))
+    print(solution["success"], solution["message"])
 
     support_vecs = inputs[:, alpha > threshold]
     support_targets = targets[alpha > threshold]
-    print(support_vecs.shape)
+
     # calculate b = sum_i alpha_i * t_i * K(s, x_i) - t_s for SV s
-    # print(alpha, objective(alpha))
     b = np.zeros(support_vecs.shape[1])
     for i in range(len(b)):
         # print("kern", alpha*kernel(support_vecs[:, i], inputs))
         b[i] = np.sum(alpha*targets*kernel(support_vecs[:, i], inputs)) - support_targets[i]
-        print("b val " + str(i), b[i])
+        # print("b val " + str(i), b[i])
     b = np.mean(b)
 
     alpha_t = alpha*targets
     indicator = lambda s : sum(alpha_t * kernel(s, inputs)) - b
-    for i in range(len(targets)):
-        print("test " + str(i), indicator(inputs[:, i]), np.sign(indicator(inputs[:, i])) == targets[i])
+    # for i in range(len(targets)):
+    #     print("test " + str(i), indicator(inputs[:, i]), np.sign(indicator(inputs[:, i])) == targets[i])
 
     plotAll(inputs, targets, indicator)
+    if not out == "":
+        plt.savefig(out)
+    if plot:
+        plt.show()
+
+    return solution
