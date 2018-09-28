@@ -12,6 +12,9 @@ def check_ind(i):
         "Options:\n", "-s [seed]\n", "-o [name of output]\n", "-p [N] [(x,y)] [sigma] [class]")
         exit()
 
+if len(sys.argv) <= 1:
+    check_ind(-1)
+
 name = "data"
 i = 1
 cluster_data = []
@@ -48,8 +51,11 @@ while i < len(sys.argv):
         check_ind(-1)
     i += 1
 
-permute = list(range(len(cluster_data)))
+# make it 2xN matrix
+cluster_data = np.transpose(cluster_data)
+
+permute = list(range(cluster_data.shape[1]))
 np.random.shuffle(permute)
-inputs = cluster_data[permute, :]
+inputs = cluster_data[:, permute]
 targets = class_data[permute]
 np.savez(name, inputs=inputs, targets=targets)
