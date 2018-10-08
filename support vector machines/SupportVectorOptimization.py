@@ -2,9 +2,6 @@ import numpy, random , math
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
-# X = numpy.load("example.npz")["inputs"]
-# t = numpy.load("example.npz")["targets"]
-
 PMatrix = 0
 #global globalAlpha = objective(ALPHA_HERE)
 
@@ -21,10 +18,15 @@ def lin_kernel(x, y):
         return numpy.matmul(numpy.transpose(x), y)
 
 def poly_kernel(x, y, param):
-    return (lin_kernel(x, y) + 1)**p
+    return (lin_kernel(x, y) + 1)**param
 
 def rbf_kernel(x, y, param):
-    return numpy.exp(-lin_kernel(x-y, x-y) / (2*param**2))
+    if not x.shape == y.shape:
+        diff = numpy.transpose(numpy.transpose(y) - x)
+    else:
+        diff = y-x
+
+    return numpy.exp(-(diff[0,:]**2 + diff[1,:]**2) / (2*param**2))
 
 def calculatePMatrix(x, t, kernel):
     tTerm = numpy.outer(t, t)

@@ -9,7 +9,7 @@ from printer import plotAll
 
 threshold = 1e-9
 
-def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="", plot=True):
+def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="", plot=True, title=""):
 
     data = np.load(datafile)
     inputs = data['inputs']
@@ -64,7 +64,9 @@ def solve(datafile, kern_type="linear", kern_param=None, slack=np.inf, out="", p
 
     plotAll(inputs, targets, indicator)
     if not out == "":
+        plt.title("{} Success: {}".format(title, solution["success"]))
         plt.savefig(out)
+        plt.clf()
     if plot:
         plt.show()
 
