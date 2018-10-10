@@ -44,7 +44,7 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
-        prior = np.array([np.sum(labels == c) / Npts for c in range(classes)])
+    prior = np.array([np.sum(labels == c) / Npts for c in range(Nclasses)])
     # ==========================
 
     return prior
@@ -68,15 +68,15 @@ def mlParams(X, labels, W=None):
 
     # TODO: fill in the code to compute mu and sigma!
     # ==========================
-        # for all classes (should not be too slow with for loop since few classes)
-        for k in range(Nclasses):
-            c = classes[k] # the current class
-            X_k = X[labels == c] # all X with class
-            mu[k,:] = np.mean(X_k, axis=0)
+    # for all classes (should not be too slow with for loop since few classes)
+    for k in range(Nclasses):
+        c = classes[k] # the current class
+        X_k = X[labels == c] # all X with class
+        mu[k,:] = np.mean(X_k, axis=0)
 
-            # construct Sigma as diagonal matrix
-            sigma_diag = np.mean(np.square(X_k - mu[k]), axis=0)
-            sigma[k,:, :] = np.diag(sigma_diag)
+        # construct Sigma as diagonal matrix
+        sigma_diag = np.mean(np.square(X_k - mu[k]), axis=0)
+        sigma[k,:, :] = np.diag(sigma_diag)
     # ==========================
 
     return mu, sigma
@@ -94,14 +94,14 @@ def classifyBayes(X, prior, mu, sigma):
 
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
-        det = lambda s: np.prod(s.diag()) # return determinant
-        inv = lambda s: 1 / s.diag() # returns diagonal of inverse
+    det = lambda s: np.prod(np.diag(s)) # return determinant
+    inv = lambda s: 1 / np.diag(s) # returns diagonal of inverse
 
-        for k in range(Nclasses):
-            diff = X - mu[k, :]
-            logProb[k, :] = - 1/2 * np.log(det(sigma[k]))
-                      - 1/2 * diff*inv(sigma[k, :, :)*diff
-            logProb[k, :] += np.log(prior[k])
+    for k in range(Nclasses):
+        diff = X - mu[k, :]
+        logProb[k, :] = -1/2 * np.sum(diff * inv(sigma[k, :, :]) * diff, axis=1)
+        logProb[k, :] -= 1/2 * np.log(det(sigma[k]))
+        logProb[k, :] += np.log(prior[k])
     # ==========================
 
     # one possible way of finding max a-posteriori once
@@ -134,9 +134,9 @@ class BayesClassifier(object):
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
+# X, labels = genBlobs(centers=5)
+# mu, sigma = mlParams(X,labels)
+# plotGaussian(X,labels,mu,sigma)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
@@ -233,77 +233,3 @@ class BoostClassifier(object):
 
     def classify(self, X):
         return classifyBoost(X, self.classifiers, self.alphas, self.nbr_classes)
-
-
-# ## Run some experiments
-#
-# Call the `testClassifier` and `plotBoundary` functions for this part.
-
-
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
-
-
-
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
-
-
-
-#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
-
-
-# Now repeat the steps with a decision tree classifier.
-
-
-#testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
-
-
-
-#testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
-
-
-
-#testClassifier(DecisionTreeClassifier(), dataset='vowel',split=0.7)
-
-
-
-#testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
-
-
-
-#plotBoundary(DecisionTreeClassifier(), dataset='iris',split=0.7)
-
-
-
-#plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
-
-
-# ## Bonus: Visualize faces classified using boosted decision trees
-#
-# Note that this part of the assignment is completely voluntary! First, let's check how a boosted decision tree classifier performs on the olivetti data. Note that we need to reduce the dimension a bit using PCA, as the original dimension of the image vectors is `64 x 64 = 4096` elements.
-
-
-#testClassifier(BayesClassifier(), dataset='olivetti',split=0.7, dim=20)
-
-
-
-#testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
-
-
-# You should get an accuracy around 70%. If you wish, you can compare this with using pure decision trees or a boosted bayes classifier. Not too bad, now let's try and classify a face as belonging to one of 40 persons!
-
-
-#X,y,pcadim = fetchDataset('olivetti') # fetch the olivetti data
-#xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,0.7) # split into training and testing
-#pca = decomposition.PCA(n_components=20) # use PCA to reduce the dimension to 20
-#pca.fit(xTr) # use training data to fit the transform
-#xTrpca = pca.transform(xTr) # apply on training data
-#xTepca = pca.transform(xTe) # apply on test data
-# use our pre-defined decision tree classifier together with the implemented
-# boosting to classify data points in the training data
-#classifier = BoostClassifier(DecisionTreeClassifier(), T=10).trainClassifier(xTrpca, yTr)
-#yPr = classifier.classify(xTepca)
-# choose a test point to visualize
-#testind = random.randint(0, xTe.shape[0]-1)
-# visualize the test point together with the training points used to train
-# the class that the test point was classified to belong to
-#visualizeOlivettiVectors(xTr[yTr == yPr[testind],:], xTe[testind,:])
