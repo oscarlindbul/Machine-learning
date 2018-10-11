@@ -44,7 +44,8 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
-    prior = np.array([np.sum(labels == c) / Npts for c in range(Nclasses)])
+    #prior = np.array([np.sum(labels == c) / Npts for c in range(Nclasses)])
+    prior = np.array([np.sum(W[labels == c]) for c in range(Nclasses)])
     # ==========================
 
     return prior
@@ -71,11 +72,13 @@ def mlParams(X, labels, W=None):
     # for all classes (should not be too slow with for loop since few classes)
     for k in range(Nclasses):
         c = classes[k] # the current class
-        X_k = X[labels == c] # all X with class
-        mu[k,:] = np.mean(X_k, axis=0)
+        X_k = X[labels == c] # all X with class c
+        W_k = W[labels == c] # all W with class c
+        W_sum = np.sum(W_k)
+        mu[k,:] = np.sum(W_k*X_k, axis=0) / W_sum
 
         # construct Sigma as diagonal matrix
-        sigma_diag = np.mean(np.square(X_k - mu[k]), axis=0)
+        sigma_diag = np.sum(W_k*np.square(X_k - mu[k, :]), axis=0) / W_sum
         sigma[k,:, :] = np.diag(sigma_diag)
     # ==========================
 
@@ -98,7 +101,7 @@ def classifyBayes(X, prior, mu, sigma):
     inv = lambda s: 1 / np.diag(s) # returns diagonal of inverse
 
     for k in range(Nclasses):
-        diff = X - mu[k, :]
+        diff = X - mu[k, :] # (Nxd)
         logProb[k, :] = -1/2 * np.sum(diff * inv(sigma[k, :, :]) * diff, axis=1)
         logProb[k, :] -= 1/2 * np.log(det(sigma[k]))
         logProb[k, :] += np.log(prior[k])
@@ -183,7 +186,11 @@ def trainBoost(base_classifier, X, labels, T=10):
 
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
+        error = np.sum(W*(1 - vote==labels))
+        alphas.append(1/2 * np.log((1-error)/error))
 
+        wCur = wCur * np.exp((1 - 2*(vote==labels))*alphas[-1])
+        wCur /= np.sum(wCur)
         # alphas.append(alpha) # you will need to append the new alpha
         # ==========================
 
@@ -207,7 +214,7 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-
+        votes = np.array([alpha * classifier.classify(X) == labels])
         # ==========================
 
         # one way to compute yPred after accumulating the votes
