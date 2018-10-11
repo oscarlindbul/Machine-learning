@@ -60,7 +60,7 @@ def trteSplit(X,y,pcSplit,seed=None):
     Ndata = X.shape[0]
     Ntr = int(np.rint(Ndata*pcSplit))
     Nte = Ndata-Ntr
-    np.random.seed(seed)    
+    np.random.seed(seed)
     idx = np.random.permutation(Ndata)
     trIdx = idx[:Ntr]
     teIdx = idx[Ntr:]
@@ -239,7 +239,7 @@ def plotBoundary(classifier, dataset='iris', split=0.7):
             # Predict
             grid[yi,xi] = trained_classifier.classify(np.array([[xx, yy]]))
 
-    
+
     ys = [i+xx+(i*xx)**2 for i in range(len(classes))]
     colormap = cm.rainbow(np.linspace(0, 1, len(ys)))
 
@@ -249,6 +249,7 @@ def plotBoundary(classifier, dataset='iris', split=0.7):
     for (color, c) in zip(colormap, classes):
         try:
             CS = plt.contour(xRange,yRange,(grid==c).astype(float),15,linewidths=0.25,colors=conv.to_rgba_array(color))
+            CS.collections[0].set_label("Class " + str(c) + " border")
         except ValueError:
             pass
         trClIdx = np.where(y[trIdx] == c)[0]
