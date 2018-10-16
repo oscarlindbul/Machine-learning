@@ -72,8 +72,9 @@ def mlParams(X, labels, W=None):
     # for all classes (should not be too slow with for loop since few classes)
     for k in range(Nclasses):
         c = classes[k] # the current class
-        X_k = X[labels == c] # all X with class c
-        W_k = W[labels == c] # all W with class c
+        c_inds = np.where(labels == c)
+        X_k = X[c_inds] # all X with class c
+        W_k = W[c_inds] # all W with class c
         W_sum = np.sum(W_k)
         mu[k,:] = np.sum(W_k*X_k, axis=0) / W_sum
 
@@ -186,11 +187,19 @@ def trainBoost(base_classifier, X, labels, T=10):
 
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
-        error = np.sum(W*(1 - vote==labels))
+        # print("vote", wCur)
+        # labels = np.reshape(labels, (Npts, 1))
+        # print("labels", labels.shape)
+        # vote = np.reshape(labels, (Npts, 1))
+        bool_thingy = np.reshape(vote==labels, (Npts, 1))
+        error = np.sum(wCur*(1 - bool_thingy))
+        if error == 0:
+            error = 1e-10
         alphas.append(1/2 * np.log((1-error)/error))
 
-        wCur = wCur * np.exp((1 - 2*(vote==labels))*alphas[-1])
+        wCur = wCur * np.exp((1 - 2*bool_thingy)*alphas[-1])
         wCur /= np.sum(wCur)
+        # print(wCur)
         # alphas.append(alpha) # you will need to append the new alpha
         # ==========================
 
@@ -214,7 +223,11 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-        votes = np.array([alpha * classifier.classify(X) == labels])
+        classes = np.arange(0, Nclasses)
+        for (alpha, classifier) in zip(alphas, classifiers):
+            classified = classifier.classify(X)
+            for i in range(Nclasses):
+                votes[:, i] += alpha * (classified == classes[i])
         # ==========================
 
         # one way to compute yPred after accumulating the votes
